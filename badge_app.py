@@ -110,48 +110,95 @@ def calculate_badge_tier(total_score):
             return tier_name, tier_info
     return "First Step Starter", BADGE_TIERS["First Step Starter"]
 
+def wrap_text(text, font, max_width, draw):
+    """Wrap text to fit within max_width pixels."""
+    words = text.split()
+    lines = []
+    current = ""
+    for word in words:
+        test = (current + " " + word).strip()
+        bbox = draw.textbbox((0, 0), test, font=font)
+        if bbox[2] <= max_width:
+            current = test
+        else:
+            if current:
+                lines.append(current)
+            current = word
+    if current:
+        lines.append(current)
+    return lines
+
 def generate_badge_image(tier_name, tier_info, total_score):
-    """Generate a PNG badge image."""
-    width, height = 400, 500
+    """Generate a PNG badge image without emojis (PIL font compatibility)."""
+    width, height = 400, 520
     img = Image.new('RGB', (width, height), color='white')
     draw = ImageDraw.Draw(img)
-    
-    # Try to use a nice font, fall back to default
+
+    # Load fonts with graceful fallback
     try:
-        title_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 48)
-        text_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 24)
-        desc_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 14)
-    except:
-        title_font = ImageFont.load_default()
-        text_font = ImageFont.load_default()
-        desc_font = ImageFont.load_default()
-    
-    # Background color (badge color)
+        bold_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+        reg_path  = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+        title_font = ImageFont.truetype(bold_path, 36)
+        sub_font   = ImageFont.truetype(bold_path, 20)
+        text_font  = ImageFont.truetype(reg_path,  18)
+        small_font = ImageFont.truetype(reg_path,  13)
+    except Exception:
+        title_font = sub_font = text_font = small_font = ImageFont.load_default()
+
+    # Background
     color_hex = tier_info["color"]
     color_rgb = tuple(int(color_hex.lstrip('#')[i:i+2], 16) for i in (0, 2, 4))
     draw.rectangle([(0, 0), (width, height)], fill=color_rgb)
-    
-    # White text
-    text_color = (255, 255, 255)
-    
-    # Emoji
-    emoji = tier_info["emoji"]
-    draw.text((width//2, 50), emoji, fill=text_color, font=title_font, anchor="mm")
-    
-    # Tier name
-    draw.text((width//2, 130), tier_name, fill=text_color, font=title_font, anchor="mm")
-    
-    # Score
-    score_text = f"Score: {total_score}/30"
-    draw.text((width//2, 200), score_text, fill=text_color, font=text_font, anchor="mm")
-    
-    # Description (wrapped)
-    description = tier_info["description"]
-    draw.text((width//2, 270), description, fill=text_color, font=desc_font, anchor="mm", align="center")
-    
-    # Timestamp
-    timestamp = datetime.now().strftime("%Y-%m-%d")
-    draw.text((width//2, 450), f"Global Meeting • {timestamp}", fill=text_color, font=desc_font, anchor="mm")
+
+    # Subtle white card in the center
+    margin = 24
+    draw.rounded_rectangle(
+        [(margin, margin), (width - margin, height - margin)],
+        radius=16,
+        fill=(255, 255, 255, 220)
+    )
+
+    text_color = color_rgb          # colored text on white card
+    dark       = (40, 40, 40)
+
+    # Event label at top
+    draw.text((width // 2, 52), "AI Ambassador Sprint", fill=text_color,
+              font=sub_font, anchor="mm")
+
+    # Decorative line
+    draw.line([(margin + 16, 72), (width - margin - 16, 72)], fill=color_rgb, width=2)
+
+    # Badge label
+    draw.text((width // 2, 100), "YOUR BADGE", fill=(130, 130, 130),
+              font=small_font, anchor="mm")
+
+    # Badge tier name (may be 2 words — wrap if needed)
+    lines = wrap_text(tier_name, title_font, width - margin * 4, draw)
+    y = 135
+    for line in lines:
+        draw.text((width // 2, y), line, fill=text_color, font=title_font, anchor="mm")
+        y += 44
+
+    # Score pill
+    score_text = f"Score  {total_score} / 30"
+    draw.rounded_rectangle(
+        [(width // 2 - 80, y + 8), (width // 2 + 80, y + 38)],
+        radius=12, fill=color_rgb
+    )
+    draw.text((width // 2, y + 23), score_text, fill=(255, 255, 255),
+              font=small_font, anchor="mm")
+    y += 60
+
+    # Description (word-wrapped)
+    desc_lines = wrap_text(tier_info["description"], small_font, width - margin * 4, draw)
+    for dline in desc_lines:
+        draw.text((width // 2, y), dline, fill=dark, font=small_font, anchor="mm")
+        y += 20
+
+    # Bottom date
+    timestamp = datetime.now().strftime("%d %B %Y")
+    draw.text((width // 2, height - 36), f"Global Meeting  |  {timestamp}",
+              fill=(160, 160, 160), font=small_font, anchor="mm")
     
     return img
 
