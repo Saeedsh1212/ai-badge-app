@@ -8,6 +8,8 @@ from PIL import Image, ImageDraw, ImageFont
 import io
 import json
 from datetime import datetime
+import gspread
+from google.oauth2.service_account import Credentials
 
 # ============================================================================
 # PAGE CONFIG
@@ -202,16 +204,53 @@ def generate_badge_image(tier_name, tier_info, total_score):
     
     return img
 
+SHEET_ID = "12UKASp_jNRj2a7ZKalLy3mldNcfh0WKB96LvRUgxmHU"
+
+@st.cache_resource
+def get_sheet():
+    """Connect to Google Sheet using Streamlit secrets."""
+    try:
+        scopes = [
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive"
+        ]
+        creds_dict = dict(st.secrets["gcp_service_account"])
+        creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
+        client = gspread.authorize(creds)
+        sheet = client.open_by_key(SHEET_ID).sheet1
+        return sheet
+    except Exception as e:
+        return None
+
+def log_to_sheets(responses, total_score, tier_name):
+    """Append one row to Google Sheet (fails silently so app never breaks)."""
+    try:
+        sheet = get_sheet()
+        if sheet is None:
+            return
+        answer_map = ["A", "B", "C", "D"]
+        row = [
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            total_score,
+            tier_name,
+        ] + [answer_map[r] for r in responses]
+        sheet.append_row(row, value_input_option="USER_ENTERED")
+    except Exception:
+        pass  # Never break the user flow if logging fails
+
 def save_response(responses):
     """Save response to session state for analytics."""
-    if 'responses' not in st.session_state:
-        st.session_state.responses = []
-    st.session_state.responses.append({
+    if 'all_responses' not in st.session_state:
+        st.session_state.all_responses = []
+    total_score = sum(responses)
+    tier_name = calculate_badge_tier(total_score)[0]
+    st.session_state.all_responses.append({
         'timestamp': datetime.now().isoformat(),
         'responses': responses,
-        'score': sum(responses),  # A=0, B=1, C=2, D=3 → range 0–30
-        'tier': calculate_badge_tier(sum(responses))[0]
+        'score': total_score,
+        'tier': tier_name
     })
+    log_to_sheets(responses, total_score, tier_name)
 
 # ============================================================================
 # MAIN APP LOGIC
