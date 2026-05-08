@@ -331,17 +331,11 @@ def main():
         )
         
         # Reset button
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("Take Again", use_container_width=True):
-                st.session_state.quiz_started = False
-                st.session_state.quiz_complete = False
-                st.session_state.final_responses = []
-                st.rerun()
-        
-        with col2:
-            if st.button("Share", use_container_width=True):
-                st.write(f"🏅 I just got my **{tier_name}** badge at the AI Ambassador Sprint! What's yours?  \nhttps://ai-badge-globalmeeting.streamlit.app")
+        if st.button("↩️ Take Again", use_container_width=True):
+            st.session_state.quiz_started = False
+            st.session_state.quiz_complete = False
+            st.session_state.final_responses = []
+            st.rerun()
 
 if __name__ == "__main__":
     main()
