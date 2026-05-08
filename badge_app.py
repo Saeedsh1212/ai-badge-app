@@ -13,7 +13,7 @@ from datetime import datetime
 # PAGE CONFIG
 # ============================================================================
 st.set_page_config(
-    page_title="AI Badge Self-Assessment",
+    page_title="AI Ambassador Sprint – Find Your Badge",
     page_icon="🏅",
     layout="centered",
     initial_sidebar_state="collapsed"
@@ -35,75 +35,68 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ============================================================================
-# BADGE CONFIGURATION
+# BADGE CONFIGURATION  (A=0, B=1, C=2, D=3 → max score = 10×3 = 30)
 # ============================================================================
 BADGE_TIERS = {
-    "Explorer": {
-        "min_score": 8,
-        "max_score": 15,
+    "First Step Starter": {
+        "min_score": 0,
+        "max_score": 8,
+        "color": "#7B8FA1",
+        "emoji": "🌱",
+        "description": "You're at the beginning of your AI journey. Every expert started here!"
+    },
+    "Curious Improver": {
+        "min_score": 9,
+        "max_score": 14,
         "color": "#4A90E2",
         "emoji": "🔍",
-        "description": "You're just starting your AI journey. Keep exploring and learning!"
+        "description": "You're exploring AI tools and building useful habits. Keep going!"
     },
-    "Practitioner": {
-        "min_score": 16,
-        "max_score": 24,
+    "Automation Explorer": {
+        "min_score": 15,
+        "max_score": 20,
         "color": "#7ED321",
-        "emoji": "🎯",
-        "description": "You have solid AI foundations and apply it in your work."
+        "emoji": "⚙️",
+        "description": "You regularly use AI to automate tasks and improve your workflow."
     },
-    "Champion": {
-        "min_score": 25,
-        "max_score": 32,
+    "Workflow Helper": {
+        "min_score": 21,
+        "max_score": 26,
         "color": "#F5A623",
-        "emoji": "⭐",
-        "description": "You're actively driving AI innovation in your area."
+        "emoji": "🤝",
+        "description": "AI is embedded in how you work. You help others see the value too."
     },
-    "Catalyst": {
-        "min_score": 33,
-        "max_score": 40,
+    "Ambassador Ready": {
+        "min_score": 27,
+        "max_score": 30,
         "color": "#D0021B",
         "emoji": "🚀",
-        "description": "You're leading AI transformation. Your impact is inspiring."
+        "description": "You lead by example. You're ready to be an AI Ambassador!"
     }
 }
 
 # ============================================================================
-# SURVEY QUESTIONS (CUSTOMIZE THESE)
+# SURVEY QUESTIONS  — exact wording from manager's document
+# A=0, B=1, C=2, D=3 (same 4 options for every question)
 # ============================================================================
+ANSWER_OPTIONS = [
+    "A) Not yet",
+    "B) Tried once",
+    "C) Sometimes",
+    "D) Often / confidently"
+]
+
 SURVEY_QUESTIONS = [
-    {
-        "question": "How confident are you in understanding AI concepts?",
-        "answers": ["Not at all", "Slightly", "Moderately", "Very", "Extremely"]
-    },
-    {
-        "question": "How often do you use AI tools in your daily work?",
-        "answers": ["Never", "Rarely", "Sometimes", "Often", "Always"]
-    },
-    {
-        "question": "How much impact do you think AI will have on your role?",
-        "answers": ["None", "Minimal", "Moderate", "Significant", "Transformative"]
-    },
-    {
-        "question": "How willing are you to learn new AI skills?",
-        "answers": ["Not at all", "Somewhat reluctant", "Neutral", "Very willing", "Highly motivated"]
-    },
-    {
-        "question": "How do you view AI in your organization?",
-        "answers": ["Threat", "Neutral risk", "Interesting option", "Important tool", "Strategic priority"]
-    },
-    {
-        "question": "How much have you collaborated on AI projects?",
-        "answers": ["Never", "Minimal", "Some experience", "Regular", "Extensive"]
-    },
-    {
-        "question": "How open are you to AI-driven change?",
-        "answers": ["Very resistant", "Hesitant", "Neutral", "Supportive", "Enthusiastic"]
-    },
-    {
-        "question": "How would you rate your overall AI readiness?",
-        "answers": ["Very unprepared", "Unprepared", "Neutral", "Well prepared", "Highly prepared"]
-    }
+    {"question": "I have used automation for repeat tasks to save time (summaries, drafts, formatting, follow-ups).", "answers": ANSWER_OPTIONS},
+    {"question": "I use a consistent structure when I ask AI for help (goal + context + desired format).", "answers": ANSWER_OPTIONS},
+    {"question": "I ask for AI outputs in a reusable format (checklist, table, email draft, slide outline).", "answers": ANSWER_OPTIONS},
+    {"question": "I use AI to turn meeting notes into 'Actions / Owners / Deadlines.'", "answers": ANSWER_OPTIONS},
+    {"question": "I use AI to draft or improve messages (email/Teams) and then edit before sending.", "answers": ANSWER_OPTIONS},
+    {"question": "I have created or reused AI prompt template(s) so I don't start from scratch each time.", "answers": ANSWER_OPTIONS},
+    {"question": "I add a quality step to my AI prompts (e.g., 'flag assumptions,' 'list what to verify,' 'check for missing items').", "answers": ANSWER_OPTIONS},
+    {"question": "I verify key details before using the AI generated result (facts, numbers, dates, meaning).", "answers": ANSWER_OPTIONS},
+    {"question": "I know the AI related safe-data rule and apply it (don't paste confidential/sensitive info into non-approved tools).", "answers": ANSWER_OPTIONS},
+    {"question": "I have shared a useful automation/template with others (or I'm willing to).", "answers": ANSWER_OPTIONS},
 ]
 
 # ============================================================================
@@ -115,7 +108,7 @@ def calculate_badge_tier(total_score):
     for tier_name, tier_info in BADGE_TIERS.items():
         if tier_info["min_score"] <= total_score <= tier_info["max_score"]:
             return tier_name, tier_info
-    return "Explorer", BADGE_TIERS["Explorer"]
+    return "First Step Starter", BADGE_TIERS["First Step Starter"]
 
 def generate_badge_image(tier_name, tier_info, total_score):
     """Generate a PNG badge image."""
@@ -149,7 +142,7 @@ def generate_badge_image(tier_name, tier_info, total_score):
     draw.text((width//2, 130), tier_name, fill=text_color, font=title_font, anchor="mm")
     
     # Score
-    score_text = f"Score: {total_score}/40"
+    score_text = f"Score: {total_score}/30"
     draw.text((width//2, 200), score_text, fill=text_color, font=text_font, anchor="mm")
     
     # Description (wrapped)
@@ -169,8 +162,8 @@ def save_response(responses):
     st.session_state.responses.append({
         'timestamp': datetime.now().isoformat(),
         'responses': responses,
-        'score': sum(responses) + 8,  # 1-5 per question, min 8
-        'tier': calculate_badge_tier(sum(responses) + 8)[0]
+        'score': sum(responses),  # A=0, B=1, C=2, D=3 → range 0–30
+        'tier': calculate_badge_tier(sum(responses))[0]
     })
 
 # ============================================================================
@@ -178,8 +171,8 @@ def save_response(responses):
 # ============================================================================
 
 def main():
-    st.title("🏅 AI Badge Self-Assessment")
-    st.caption("Discover your AI standpoint in less than 2 minutes")
+    st.title("🏅 AI Ambassador Sprint")
+    st.caption("Find Your Badge · Scan, answer fast, get your badge. This is a self-check — no right or wrong answers.")
     
     # Initialize session state
     if 'quiz_started' not in st.session_state:
@@ -192,17 +185,20 @@ def main():
     # Start screen
     if not st.session_state.quiz_started:
         st.markdown("""
-        ### Welcome to the AI Badge Challenge! 🚀
-        
-        Answer 8 quick questions about your AI journey and receive your personalized badge instantly.
-        
-        **Badge Tiers:**
-        - 🔍 **Explorer** (8-15): Starting your AI journey
-        - 🎯 **Practitioner** (16-24): Building AI skills actively
-        - ⭐ **Champion** (25-32): Driving AI innovation
-        - 🚀 **Catalyst** (33-40): Leading AI transformation
-        
-        Ready? Let's go!
+        ### Welcome! 👋
+
+        Answer 10 quick statements about how you use AI in your work.  
+        Your badge is calculated **automatically** — no maths needed.
+
+        | Score | Badge |
+        |-------|-------|
+        | 0 – 8 | 🌱 First Step Starter |
+        | 9 – 14 | 🔍 Curious Improver |
+        | 15 – 20 | ⚙️ Automation Explorer |
+        | 21 – 26 | 🤝 Workflow Helper |
+        | 27 – 30 | 🚀 Ambassador Ready |
+
+        *A = 0 pts · B = 1 pt · C = 2 pts · D = 3 pts*
         """)
         
         if st.button("Start Self-Assessment", use_container_width=True, type="primary"):
@@ -235,7 +231,7 @@ def main():
             
             if response is not None:
                 # Convert answer to score (1-5)
-                score = q_data["answers"].index(response) + 1
+                score = q_data["answers"].index(response)  # A=0, B=1, C=2, D=3
                 responses.append(score)
             else:
                 responses.append(None)
@@ -254,14 +250,14 @@ def main():
     
     # Result screen
     elif st.session_state.quiz_complete:
-        total_score = sum(st.session_state.final_responses) + 8  # Add 8 because 8 questions × min 1 = 8
+        total_score = sum(st.session_state.final_responses)  # A=0, B=1, C=2, D=3 → range 0–30
         tier_name, tier_info = calculate_badge_tier(total_score)
         
         st.markdown("---")
         st.markdown('<div class="badge-container">', unsafe_allow_html=True)
         
         st.markdown(f'<p class="badge-title">{tier_info["emoji"]} Your Badge: {tier_name}</p>', unsafe_allow_html=True)
-        st.markdown(f'<p class="badge-score">Score: {total_score} / 40</p>', unsafe_allow_html=True)
+        st.markdown(f'<p class="badge-score">Score: {total_score} / 30</p>', unsafe_allow_html=True)
         st.markdown(f'<p class="badge-description">{tier_info["description"]}</p>', unsafe_allow_html=True)
         
         st.markdown('</div>', unsafe_allow_html=True)
@@ -298,7 +294,7 @@ def main():
         
         with col2:
             if st.button("Share", use_container_width=True):
-                st.write(f"🏅 I just got my **{tier_name}** AI Badge! What's yours?")
+                st.write(f"🏅 I just got my **{tier_name}** badge at the AI Ambassador Sprint! What's yours?  \nhttps://ai-badge-globalmeeting.streamlit.app")
 
 if __name__ == "__main__":
     main()
