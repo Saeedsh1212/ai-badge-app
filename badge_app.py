@@ -45,35 +45,62 @@ BADGE_TIERS = {
         "max_score": 8,
         "color": "#7B8FA1",
         "emoji": "🌱",
-        "description": "You're at the beginning of your AI journey. Every expert started here!"
+        "description": "You're at the beginning of your AI journey. Every expert started here!",
+        "next_steps": [
+            "Try one 'push-button' task this week: turn notes into a 5-bullet summary, or a bullet list into a cleaner email draft.",
+            "Use this copy-ready ask: \"Please summarize this for [audience] in 5 bullets, and add 3 suggested next steps.\"",
+            "Focus on Q1 (find a repeat task), Q4–5 (summaries/drafts), Q8–9 (check + safe data).",
+        ]
     },
     "Curious Improver": {
         "min_score": 9,
         "max_score": 14,
         "color": "#4A90E2",
         "emoji": "🔍",
-        "description": "You're exploring AI tools and building useful habits. Keep going!"
+        "description": "You're exploring AI tools and building useful habits. Keep going!",
+        "next_steps": [
+            "Use a simple structure every time: Goal + Context + Format.",
+            "Example: \"Draft a short update for PV colleagues. Keep it neutral. Output as bullets + actions.\"",
+            "Ask for a reusable format: \"Return as a checklist/table.\"",
+            "Build on Q2–3 (structure + format) and Q5 (draft then edit).",
+        ]
     },
     "Automation Explorer": {
         "min_score": 15,
         "max_score": 20,
         "color": "#7ED321",
         "emoji": "⚙️",
-        "description": "You regularly use AI to automate tasks and improve your workflow."
+        "description": "You regularly use AI to automate tasks and improve your workflow.",
+        "next_steps": [
+            "Create one reusable template for a repeat task and save it (OneNote/Teams).",
+            "Template idea: Summary → Actions/Owners/Dates → Risks/Unknowns → Next steps. Reuse it twice this week.",
+            "Improve Q6 (reuse a template) + Q4 (notes → actions).",
+        ]
     },
     "Workflow Helper": {
         "min_score": 21,
         "max_score": 26,
         "color": "#F5A623",
         "emoji": "🤝",
-        "description": "AI is embedded in how you work. You help others see the value too."
+        "description": "AI is embedded in how you work. You help others see the value too.",
+        "next_steps": [
+            "Add a quality step to every use: \"List assumptions, what to verify, and anything missing.\"",
+            "Share one template with your team (with a one-line 'when to use' note).",
+            "Strengthen Q7–8 (quality + verification) and Q10 (sharing).",
+        ]
     },
     "Ambassador Ready": {
         "min_score": 27,
         "max_score": 30,
         "color": "#D0021B",
         "emoji": "🚀",
-        "description": "You lead by example. You're ready to be an AI Ambassador!"
+        "description": "You lead by example. You're ready to be an AI Ambassador!",
+        "next_steps": [
+            "Start a lightweight 'Ambassador loop': 15 min every 2 weeks, 6–8 people.",
+            "Build a mini library: 10 templates + a 'safe data + verification' note for each.",
+            "Run a 10-min show & tell: one workflow, one lesson, one template.",
+            "Use Q1–10 results to spot where your group needs help (templates, checks, safe data) and target enablement.",
+        ]
     }
 }
 
@@ -346,6 +373,15 @@ def main():
         st.markdown(f'<p class="badge-description">{tier_info["description"]}</p>', unsafe_allow_html=True)
         
         st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.markdown("---")
+        
+        # Next steps section
+        st.markdown("### 🎯 Your Next Steps")
+        st.caption("Your badge is a starting point, not a label. Pick one action below and try it within 7 days.")
+        for step in tier_info["next_steps"]:
+            st.markdown(f"- {step}")
+        st.caption("💡 Re-take this self-check in 4–6 weeks to see what changed.")
         
         st.markdown("---")
         
