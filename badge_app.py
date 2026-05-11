@@ -159,9 +159,9 @@ def wrap_text(text, font, max_width, draw):
 
 def generate_badge_image(tier_name, tier_info, total_score):
     """Generate a PNG badge image without emojis (PIL font compatibility)."""
-    width, height = 400, 520
-    img = Image.new('RGB', (width, height), color='white')
-    draw = ImageDraw.Draw(img)
+    width = 400
+    margin = 24
+    text_width = width - margin * 4
 
     # Load fonts with graceful fallback
     try:
@@ -169,26 +169,51 @@ def generate_badge_image(tier_name, tier_info, total_score):
         reg_path  = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
         title_font = ImageFont.truetype(bold_path, 36)
         sub_font   = ImageFont.truetype(bold_path, 20)
-        text_font  = ImageFont.truetype(reg_path,  18)
         small_font = ImageFont.truetype(reg_path,  13)
+        tiny_font  = ImageFont.truetype(reg_path,  11)
     except Exception:
-        title_font = sub_font = text_font = small_font = ImageFont.load_default()
+        title_font = sub_font = small_font = tiny_font = ImageFont.load_default()
+
+    # Pre-calculate height dynamically
+    # Estimate lines needed for description + next steps
+    dummy_img = Image.new('RGB', (width, 100))
+    dummy_draw = ImageDraw.Draw(dummy_img)
+    desc_lines = wrap_text(tier_info["description"], small_font, text_width, dummy_draw)
+    next_steps = tier_info.get("next_steps", [])
+    next_step_lines = []
+    for step in next_steps:
+        next_step_lines += wrap_text(f"- {step}", tiny_font, text_width, dummy_draw)
+
+    # Calculate total height needed
+    height = (
+        120                          # top area (title + line + badge label)
+        + 44 * len(wrap_text(tier_name, title_font, text_width, dummy_draw))  # tier name
+        + 55                         # score pill
+        + 20 * len(desc_lines)       # description
+        + 25                         # "Your next step:" label
+        + 16 * len(next_step_lines)  # next steps
+        + 60                         # bottom padding + date
+    )
+    height = max(height, 520)
+
+    img = Image.new('RGB', (width, height), color='white')
+    draw = ImageDraw.Draw(img)
 
     # Background
     color_hex = tier_info["color"]
     color_rgb = tuple(int(color_hex.lstrip('#')[i:i+2], 16) for i in (0, 2, 4))
     draw.rectangle([(0, 0), (width, height)], fill=color_rgb)
 
-    # Subtle white card in the center
-    margin = 24
+    # White card
     draw.rounded_rectangle(
         [(margin, margin), (width - margin, height - margin)],
         radius=16,
         fill=(255, 255, 255, 220)
     )
 
-    text_color = color_rgb          # colored text on white card
+    text_color = color_rgb
     dark       = (40, 40, 40)
+    mid        = (100, 100, 100)
 
     # Event label at top
     draw.text((width // 2, 52), "AI Ambassador Sprint", fill=text_color,
@@ -201,10 +226,10 @@ def generate_badge_image(tier_name, tier_info, total_score):
     draw.text((width // 2, 100), "YOUR BADGE", fill=(130, 130, 130),
               font=small_font, anchor="mm")
 
-    # Badge tier name (may be 2 words — wrap if needed)
-    lines = wrap_text(tier_name, title_font, width - margin * 4, draw)
+    # Badge tier name
+    tname_lines = wrap_text(tier_name, title_font, text_width, draw)
     y = 135
-    for line in lines:
+    for line in tname_lines:
         draw.text((width // 2, y), line, fill=text_color, font=title_font, anchor="mm")
         y += 44
 
@@ -216,13 +241,30 @@ def generate_badge_image(tier_name, tier_info, total_score):
     )
     draw.text((width // 2, y + 23), score_text, fill=(255, 255, 255),
               font=small_font, anchor="mm")
-    y += 60
+    y += 55
 
-    # Description (word-wrapped)
-    desc_lines = wrap_text(tier_info["description"], small_font, width - margin * 4, draw)
+    # Description
+    desc_lines = wrap_text(tier_info["description"], small_font, text_width, draw)
     for dline in desc_lines:
         draw.text((width // 2, y), dline, fill=dark, font=small_font, anchor="mm")
         y += 20
+
+    # Divider before next steps
+    y += 8
+    draw.line([(margin + 16, y), (width - margin - 16, y)], fill=(220, 220, 220), width=1)
+    y += 12
+
+    # Next steps label
+    draw.text((margin + 16, y), "Your next step:", fill=text_color, font=small_font)
+    y += 18
+
+    # Next steps bullets
+    for step in next_steps:
+        step_lines = wrap_text(f"- {step}", tiny_font, text_width, draw)
+        for sline in step_lines:
+            draw.text((margin + 16, y), sline, fill=mid, font=tiny_font)
+            y += 16
+        y += 2
 
     # Bottom date
     timestamp = datetime.now().strftime("%d %B %Y")
