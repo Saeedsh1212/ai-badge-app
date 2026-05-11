@@ -99,7 +99,6 @@ BADGE_TIERS = {
             "Start a lightweight 'Ambassador loop': 15 min every 2 weeks, 6–8 people.",
             "Build a mini library: 10 templates + a 'safe data + verification' note for each.",
             "Run a 10-min show & tell: one workflow, one lesson, one template.",
-            "Use Q1–10 results to spot where your group needs help (templates, checks, safe data) and target enablement.",
         ]
     }
 }
