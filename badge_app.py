@@ -93,7 +93,7 @@ BADGE_TIERS = {
         "emoji": "🚀",
         "description": "You lead by example. You're ready to be an AI Ambassador!",
         "next_steps": [
-            "Start a lightweight 'Ambassador loop': 15 min every 2 weeks, 6–8 people.",
+            "Start a lightweight 'Ambassador loop': 15 min every 2 weeks, 6-8 people.",
             "Build a mini library: 10 templates + a 'safe data + verification' note for each.",
             "Run a 10-min show & tell: one workflow, one lesson, one template.",
         ]
