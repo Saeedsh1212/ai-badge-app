@@ -71,7 +71,8 @@ BADGE_TIERS = {
         "description": "You regularly use AI to automate tasks and improve your workflow.",
         "next_steps": [
             "Create one reusable template for a repeat task and save it (OneNote/Teams).",
-            "Template idea: Summary → Actions/Owners/Dates → Risks/Unknowns → Next steps. Reuse it twice this week.",
+            "Template idea: Summary -> Actions/Owners/Dates -> Risks/Unknowns -> Next steps.",
+            "Reuse it twice this week.",
         ]
     },
     "Workflow Helper": {
