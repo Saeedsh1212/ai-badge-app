@@ -49,7 +49,6 @@ BADGE_TIERS = {
         "next_steps": [
             "Try one 'push-button' task this week: turn notes into a 5-bullet summary, or a bullet list into a cleaner email draft.",
             "Use this copy-ready ask: \"Please summarize this for [audience] in 5 bullets, and add 3 suggested next steps.\"",
-            "Focus on Q1 (find a repeat task), Q4–5 (summaries/drafts), Q8–9 (check + safe data).",
         ]
     },
     "Curious Improver": {
@@ -62,7 +61,6 @@ BADGE_TIERS = {
             "Use a simple structure every time: Goal + Context + Format.",
             "Example: \"Draft a short update for PV colleagues. Keep it neutral. Output as bullets + actions.\"",
             "Ask for a reusable format: \"Return as a checklist/table.\"",
-            "Build on Q2–3 (structure + format) and Q5 (draft then edit).",
         ]
     },
     "Automation Explorer": {
@@ -74,7 +72,6 @@ BADGE_TIERS = {
         "next_steps": [
             "Create one reusable template for a repeat task and save it (OneNote/Teams).",
             "Template idea: Summary → Actions/Owners/Dates → Risks/Unknowns → Next steps. Reuse it twice this week.",
-            "Improve Q6 (reuse a template) + Q4 (notes → actions).",
         ]
     },
     "Workflow Helper": {
@@ -86,7 +83,6 @@ BADGE_TIERS = {
         "next_steps": [
             "Add a quality step to every use: \"List assumptions, what to verify, and anything missing.\"",
             "Share one template with your team (with a one-line 'when to use' note).",
-            "Strengthen Q7–8 (quality + verification) and Q10 (sharing).",
         ]
     },
     "Ambassador Ready": {
