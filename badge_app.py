@@ -82,10 +82,10 @@ BADGE_TIERS = {
 # A=0, B=1, C=2, D=3 (same 4 options for every question)
 # ============================================================================
 ANSWER_OPTIONS = [
-    "A) Not yet",
-    "B) Tried once",
-    "C) Sometimes",
-    "D) Often / confidently"
+    "Not yet",
+    "Tried once",
+    "Sometimes",
+    "Often / confidently"
 ]
 
 SURVEY_QUESTIONS = [
@@ -284,7 +284,6 @@ def main():
         | 21 – 26 | 🤝 Workflow Helper |
         | 27 – 30 | 🚀 Ambassador Ready |
 
-        *A = 0 pts · B = 1 pt · C = 2 pts · D = 3 pts*
         """)
         
         if st.button("Start Self-Assessment", use_container_width=True, type="primary"):
